@@ -1,0 +1,9 @@
+# 로그인 상태 — 절대 올리지 않음
+.naver-profile/
+# 내 설정 (블로그 아이디, 폴더 위치)
+config.json
+# 설치 파일, 내 글, 실행 기록
+node_modules/
+drafts/
+logs/
+*.log

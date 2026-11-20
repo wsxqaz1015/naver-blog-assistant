@@ -1,0 +1,7 @@
+{
+  "blogId": "my_blog_id",
+  "photoDir": "C:\\Users\\me\\Pictures\\블로그사진",
+  "dataDir": "",
+  "categories": ["일상", "맛집", "카페", "여행"],
+  "maxChars": 4000
+}
