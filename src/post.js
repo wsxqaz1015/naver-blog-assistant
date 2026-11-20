@@ -150,7 +150,7 @@ async function waitCommitted(expected, { where = 'text' } = {}) {
   throw new Error(`입력한 글이 편집기에 그대로 들어가지 않았어요 (원본 "${want.slice(0, 30)}" / 편집기 "${got.slice(0, 30)}")`);
 }
 
-// 본문 정렬: 사용자 기본은 가운데 (기존 글도 90% 이상 가운데, 2026-11-16 요청). 한 번 맞추면 다음 문단도 이어짐
+// 본문 정렬: 기본은 가운데 (draft.md의 '정렬:'로 바꿀 수 있음). 한 번 맞추면 다음 문단도 이어짐
 // 소제목·사진·지도 뒤에 새로 생긴 본문은 왼쪽으로 돌아갈 수 있어서 본문 블록마다 확인
 async function ensureAlign() {
   const want = draft.align;
@@ -164,7 +164,7 @@ async function ensureAlign() {
   await page.waitForTimeout(300);
 }
 
-// Enter 후 문단 수가 실제로 1 늘었는지 확인. 안 늘었으면 한 번 더 (2026-11-16 빈 줄 하나가 빠졌던 문제)
+// Enter 후 문단 수가 실제로 1 늘었는지 확인. 안 늘었으면 한 번 더 (빈 줄 하나가 빠졌던 문제)
 async function pressEnterChecked() {
   const paras = () => page.locator('.se-component.se-text .se-text-paragraph').count();
   const before = await paras();
@@ -221,7 +221,7 @@ async function addHr() {
 
 // 편집기는 화면에서 멀어진 사진을 다시 임시 그림(data:svg)으로 바꿔요 (사진이 많을 때).
 // 그래서 문서 전체의 src로 세면 숫자가 오락가락함 → 사진마다 화면에 보일 때 실제 주소(pstatic)를 확인하고
-// data-bt-ok 표시를 붙여 둠. 한 번 확인된 사진은 다시 임시 그림이 되어도 업로드 완료로 셈 (2026-11-16)
+// data-bt-ok 표시를 붙여 둠. 한 번 확인된 사진은 다시 임시 그림이 되어도 업로드 완료로 셈
 const markLoaded = () => page.evaluate(() => {
   for (const i of document.querySelectorAll('.se-component.se-image img')) {
     if (/^https:\/\/[^/]*pstatic\.net\//.test(i.getAttribute('src') || '')) i.setAttribute('data-bt-ok', '1');
@@ -569,7 +569,7 @@ try {
   await safeClick(page.locator('button[class^="save_count_btn__"]').first());
   await page.waitForTimeout(1500);
   await shot(page, '임시저장-목록');
-  // 같은 제목이 여러 개면 알림 (사진이 많아 작업이 길면 네이버가 중간에 자동 임시저장해서 하나 더 생김, 2026-11-16)
+  // 같은 제목이 여러 개면 알림 (사진이 많아 작업이 길면 네이버가 중간에 자동 임시저장해서 하나 더 생김)
   const same = (await page.locator('li[class^="item__"]').allInnerTexts())
     .map((t) => t.split('\n').map((x) => x.trim()).filter(Boolean))
     .filter((p) => p[0] === draft.title)
@@ -612,7 +612,7 @@ const media = [...new Set(draft.originals.length || expectVideos.some((v) => v.o
   : [...expectPhotos, ...expectVideos.map((v) => v.file)])];
 const isMainPhotoDir = path.resolve(draft.photoDir) === path.resolve(DEFAULT_PHOTO_DIR);
 if (allOk && media.length && !isMainPhotoDir) {
-  log(`사진 폴더가 기본 블로그사진 폴더가 아니라서(${draft.photoDir}) 사진을 옮기지 않았어요.`);
+  log(`사진 폴더가 기본 사진 폴더가 아니라서(${draft.photoDir}) 사진을 옮기지 않았어요.`);
 } else if (allOk && media.length) {
   const moved = moveUsed(media, draft.photoDir);
   const bad = moved.filter((m) => !m.ok);

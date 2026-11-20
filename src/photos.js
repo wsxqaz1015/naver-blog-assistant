@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { DEFAULT_PHOTO_DIR } from './draft.js';
 import { ROOT, dataDir } from './browser.js';
 
@@ -117,7 +118,8 @@ export function moveUsed(files, dir = DEFAULT_PHOTO_DIR) {
   return results;
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1'))) {
+// 직접 실행했을 때만 (한글·띄어쓰기 폴더 이름에서도 맞게 비교)
+if (process.argv[1] && path.resolve(process.argv[1]).toLowerCase() === fileURLToPath(import.meta.url).toLowerCase()) {
   const res = scanPhotos(process.argv[2] && process.argv[2] !== 'move' ? process.argv[2] : undefined);
   fs.mkdirSync(dataDir('logs'), { recursive: true });
   fs.writeFileSync(path.join(dataDir('logs'), 'photos-latest.json'), JSON.stringify(res, null, 2), 'utf8');
@@ -125,6 +127,6 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(im
   console.log(`사진 폴더: ${res.dir}`);
   console.log(`파일 ${res.items.length}개 (사용 가능 ${res.items.filter((i) => i.usable).length}개)`);
   for (const i of res.items) {
-    console.log(`${i.usable ? '✅' : '⚠'} ${i.kind} ${i.folder ? i.folder + "/" : ""}${i.name} ${i.width ? `${i.width}x${i.height}` : ''}${i.kind === '영상' && i.duration ? ` ${i.duration.toFixed(1)}초` : ''} ${i.problems.join(', ')}${i.note ? ' / ' + i.note : ''}`);
+    console.log(`${i.usable ? '✅' : '⚠️'} ${i.kind} ${i.folder ? i.folder + "/" : ""}${i.name} ${i.width ? `${i.width}x${i.height}` : ''}${i.kind === '영상' && i.duration ? ` ${i.duration.toFixed(1)}초` : ''} ${i.problems.join(', ')}${i.note ? ' / ' + i.note : ''}`);
   }
 }

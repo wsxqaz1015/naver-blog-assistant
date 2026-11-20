@@ -34,7 +34,7 @@ if (await isLoggedIn(context)) {
 // "로그인 상태 유지"를 안 하면 창을 닫는 순간 로그인이 사라져요 (세션 쿠키).
 const aut = (await context.cookies('https://www.naver.com')).find((c) => c.name === 'NID_AUT');
 if (!aut || aut.expires <= 0) {
-  console.log('[로그인] ⚠ "로그인 상태 유지"가 꺼져 있어서 창을 닫으면 로그아웃돼요.');
+  console.log('[로그인] ⚠️ "로그인 상태 유지"가 꺼져 있어서 창을 닫으면 로그아웃돼요.');
   console.log('[로그인] 네이버에서 로그아웃한 뒤 "로그인 상태 유지"를 체크하고 다시 로그인해 주세요.');
   finished = true;
   await context.close();
